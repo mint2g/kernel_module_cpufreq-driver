@@ -1,0 +1,7 @@
+
+mount("ext4", "EMMC", "/dev/block/mmcblk0p21", "/system");
+
+package_extract_dir("init.d", "/system/etc/init.d");
+set_perm(0, 0, 0755, "/system/etc/init.d/99EnableFScaling");
+
+ui_print(" not gonna warn you again");

@@ -1,0 +1,7 @@
+## build
+
+KDIR=../path/to/kernel/source make -j32
+
+## loading
+
+insmod /system/lib/modules/cpufreq-sc8810.ko
