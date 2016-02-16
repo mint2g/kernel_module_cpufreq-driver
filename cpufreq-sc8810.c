@@ -96,6 +96,7 @@ enum clocking_levels {
 	OC5,OC4,OC3,OC2,OC1,	/* over clock */
 	NOC, UC0=NOC, OC0=NOC,	/* no over or under clock */
 	UC1, UC2, UC3, UC4,	/* under clock */
+	MAX_OC=OC5,MAX_UC=UC4,
 	EC, 			/* end of clocking */
 };
 
@@ -169,11 +170,13 @@ static inline void sprd_find_freqtbl_index (unsigned long freq, unsigned int *in
 
 /* ignore the whole target relation crap and use integer division */
 /* this should give a frequency pretty close to target */
+
+    // TODO: optimize this loop with MAX_OC, MAX_UC, and NOC
 	while ( i < FREQ_TABLE_SIZE) {
 		if ((sprd_cpufreq_conf->freq_tbl[i].frequency / 100000 ) == (freq / 100000 ))
 			*index = i;
+             i++;
 	}
-	i++;
 }
 
 /* generic cpufreq functions  */
