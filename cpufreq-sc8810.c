@@ -96,7 +96,7 @@ enum clocking_levels {
 	OC5,OC4,OC3,OC2,OC1,	/* over clock */
 	NOC, UC0=NOC, OC0=NOC,	/* no over or under clock */
 	UC1, UC2, UC3, UC4,	/* under clock */
-	MAX_OC=OC5,MAX_UC=UC4,
+	MAX_CL=OC5,MIN_CL=UC4,
 	EC, 			/* end of clocking */
 };
 
@@ -171,7 +171,7 @@ static inline void sprd_find_freqtbl_index (unsigned long freq, unsigned int *in
 /* ignore the whole target relation crap and use integer division */
 /* this should give a frequency pretty close to target */
 
-    // TODO: optimize this loop with MAX_OC, MAX_UC, and NOC
+    // TODO: optimize this loop with MAX_CL, MIN_CL, and NOC
 	while ( i < FREQ_TABLE_SIZE) {
 		if ((sprd_cpufreq_conf->freq_tbl[i].frequency / 100000 ) == (freq / 100000 ))
 			*index = i;
@@ -353,7 +353,7 @@ static struct freq_attr *sprd_cpufreq_attr[] = {
 
 ssize_t sprd_vdd_get(char *buf) {
 	int i, len = 0;
-	for (i = 0; i <= MAX_UC; i++) {
+	for (i = 0; i <= MIN_CL; i++) {
 		len += sprintf(buf + len, "%umhz: %lu mV\n", sprd_cpufreq_conf->freq_tbl[i].frequency / 1000, sprd_cpufreq_conf->vdduv_tbl[i] / 1000);
 	}
 	return len;
@@ -363,8 +363,8 @@ void sprd_vdd_set(const char *buf) {
 	int ret = -EINVAL;
 	int i = 0;
 	int j = 0;
-	int u[MAX_UC + 1];
-	while (j < MAX_UC + 1) {
+	int u[MIN_CL + 1];
+	while (j < MIN_CL + 1) {
 		int consumed;
 		int val;
 		ret = sscanf(buf, "%d%n", &val, &consumed);
