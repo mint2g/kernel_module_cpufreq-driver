@@ -164,7 +164,7 @@ static inline int sprd_raw_setvolt(unsigned long vdd_uv) {
 
 /* function to find index when cpufreq core gives us wrong index */
 static inline void sprd_find_freqtbl_index (unsigned long freq, unsigned int *index) {
-	 int i = 0; 
+	 int i = MAX_CL;
 /* fallback frequency  */
      *index = NOC;
 
@@ -172,7 +172,7 @@ static inline void sprd_find_freqtbl_index (unsigned long freq, unsigned int *in
 /* this should give a frequency pretty close to target */
 
     // TODO: optimize this loop with MAX_CL, MIN_CL, and NOC
-	while ( i < FREQ_TABLE_SIZE) {
+	while ( i <= MIN_CL) {
 		if ((sprd_cpufreq_conf->freq_tbl[i].frequency / 100000 ) == (freq / 100000 ))
 			*index = i;
              i++;
@@ -293,19 +293,15 @@ static unsigned int sprd_cpufreq_getspeed(unsigned int cpu)
 
 static void sprd_gen_freq_table(void)
 {
-	int i;
 
 	/* initalize frequency table */
 	sprd_cpufreq_conf->freq_tbl = sc8810_cpufreq_table_data.freq_tbl;
 	sprd_cpufreq_conf->vdduv_tbl = sc8810_cpufreq_table_data.vdduv_tbl;
-	/* calculate min and max frequency */
-	freq_max_limit = sprd_cpufreq_conf->freq_tbl[0].frequency;
 
-	for (i = 1; i < FREQ_TABLE_SIZE; i++) {
-		if (sprd_cpufreq_conf->freq_tbl[i].frequency == CPUFREQ_TABLE_END)
-			break;
-	}
-	freq_min_limit = sprd_cpufreq_conf->freq_tbl[i-1].frequency;
+	/* set min and max frequency */
+	freq_max_limit = sprd_cpufreq_conf->freq_tbl[MAX_CL].frequency;
+
+	freq_min_limit = sprd_cpufreq_conf->freq_tbl[MIN_CL].frequency;
 
 	pr_info("gen_freq_table:  min limit=%dKhz, max limit=%dKhz \n" , freq_min_limit, freq_max_limit);
 
