@@ -62,13 +62,13 @@
 #define TRANSITION_LATENCY	(10 * 1000 * 1000)
 
 /* 
- * WAIT_BOOT_TIME: (jiffies)
+ * WAIT_BOOT_TIME: (seconds)
  * 	We do not change frequency at early boot up and let the clock stabilize first. 
  * WAIT_TRANS_TIME: (msecs)
  * 	Changing frequency is a very costly operation due to extensive locking. 
  * So we limit actual transistions regardless of the transistion  latency.
  */ 
-#define WAIT_BOOT_TIME         (60 * HZ)
+#define WAIT_BOOT_TIME         (52)
 #define WAIT_TRANS_TIME		(100)
 
 static DEFINE_MUTEX(freq_lock);
@@ -276,7 +276,8 @@ static int sprd_cpufreq_target(struct cpufreq_policy *policy,
 
 	cpufreq_notify_transition(&global_freqs, CPUFREQ_POSTCHANGE);
 
-	global_freqs.old = global_freqs.new;     trans_time=jiffies+msecs_to_jiffies(WAIT_TRANS_TIME);
+	global_freqs.old = global_freqs.new;
+	trans_time = jiffies + msecs_to_jiffies(WAIT_TRANS_TIME);
 
 	mutex_unlock(&freq_lock);
 
@@ -443,8 +444,8 @@ static int __init sprd_cpufreq_modinit(void)
 		pr_info("modinit: got regulator" );
 	}
 
-	boot_time=WAIT_BOOT_TIME;
-	trans_time=jiffies - msecs_to_jiffies(WAIT_BOOT_TIME*10);
+	boot_time = jiffies + msecs_to_jiffies(WAIT_BOOT_TIME*1000);
+	trans_time = boot_time - msecs_to_jiffies(WAIT_TRANS_TIME);
 	global_freqs.old = sprd_raw_getfreq();
 
 	pr_info("modinit: old_frequency: %dKhz, old_volt: %lu mV",  global_freqs.old, sprd_raw_getvolt() / 1000 );
