@@ -57,7 +57,7 @@
 #define ARMVOLT_MIN  (650 * 1000)
 
 
-#define FREQ_TABLE_SIZE 	(11)
+#define FREQ_TABLE_SIZE 	(11 - 4)
 /* overly estimated value of 10ms */
 #define TRANSITION_LATENCY	(10 * 1000 * 1000)
 
@@ -96,7 +96,7 @@ enum clocking_levels {
 	OC5,OC4,OC3,OC2,OC1,	/* over clock */
 	NOC, UC0=NOC, OC0=NOC,	/* no over or under clock */
 	UC1, UC2, UC3, UC4,	/* under clock */
-	MAX_CL=OC5,MIN_CL=UC4,
+	MAX_CL=OC5,MIN_CL=NOC,
 	EC, 			/* end of clocking */
 };
 
@@ -109,25 +109,29 @@ static struct cpufreq_table_data sc8810_cpufreq_table_data = {
 		{OC2, 1200000},	/*  48  */
 		{OC1, 1100000},	/*  44  */
 		{NOC, 1000000},	/*  40  */
+#if 0
 		{UC1, 900000},  /*  36  */
 		{UC2, 800000},  /*  32  */
 		{UC3, 700000},  /*  28  */
 		{UC4, 600000},  /*  24  */
+#endif
 		{EC, CPUFREQ_TABLE_END},
 	},
 	/* 50mV steps */
 	.vdduv_tbl = {
-	[OC5] =	1100000,
-	[OC4] = 1050000,
-	[OC3] =	1000000,
-	[OC2] =	950000,
-	[OC1] =	900000,
-	[NOC] =	850000,
-	[UC1] =	800000,
-	[UC2] =	750000,
-	[UC3] =	700000,
+	[OC5] =	900000,
+	[OC4] = 850000,
+	[OC3] =	800000,
+	[OC2] =	750000,
+	[OC1] =	700000,
+	[NOC] =	650000,
+#if 0
+	[UC1] =	650000,
+	[UC2] =	650000,
+	[UC3] =	650000,
 	[UC4] =	650000,
-	[EC] =	1100000,
+#endif
+	[EC] =	650000,
 	},
 };
 
